@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Speed Quiz</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f5f7fa;
+            --text-color: #2c3e50;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .setup-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        select, button {
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        select {
+            background-color: white;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .quiz-section {
+            display: none;
+        }
+
+        .timer-container {
+            margin-bottom: 15px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.1s linear;
+        }
+
+        .timer-warning {
+            background-color: var(--warning-color);
+        }
+
+        .timer-danger {
+            background-color: var(--danger-color);
+        }
+
+        .question-count {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option {
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            border: 2px solid #ecf0f1;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            background-color: #d6e0e4;
+            border-color: #bdc3c7;
+        }
+
+        .correct {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .incorrect {
+            background-color: var(--danger-color);
+            color: white;
+            border-color: var(--danger-color);
+        }
+
+        .results-section {
+            display: none;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        .score span {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .time-taken {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .analytics {
+            margin: 30px 0;
+        }
+
+        .stat {
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stat-label {
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Chemistry Speed Quiz</h1>
+        <p>Test your chemistry knowledge against the clock!</p>
+    </header>
+
+    <div class="container setup-section" id="setup">
+        <h2>Choose a Topic</h2>
+        <select id="topic-select">
+            <option value="" disabled selected>Select a chemistry topic</option>
+            <option value="periodic-table">Periodic Table</option>
+            <option value="organic-chemistry">Organic Chemistry</option>
+            <option value="inorganic-chemistry">Inorganic Chemistry</option>
+            <option value="biochemistry">Biochemistry</option>
+            <option value="physical-chemistry">Physical Chemistry</option>
+            <option value="analytical-chemistry">Analytical Chemistry</option>
+            <option value="thermodynamics">Thermodynamics</option>
+            <option value="electrochemistry">Electrochemistry</option>
+            <option value="nuclear-chemistry">Nuclear Chemistry</option>
+            <option value="quantum-chemistry">Quantum Chemistry</option>
+        </select>
+        <button id="start-btn" disabled>Start Quiz</button>
+    </div>
+
+    <div class="container quiz-section" id="quiz">
+        <div class="timer-container">
+            <div class="timer-bar" id="timer-bar"></div>
+        </div>
+        <div class="question-count" id="question-count">Question 1 of 10</div>
+        <div class="question" id="question-text">Question text will appear here</div>
+        <div class="options" id="options-container">
+            <!-- Options will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <div class="container results-section" id="results">
+        <h2>Quiz Complete!</h2>
+        <div class="score">Your score: <span id="final-score">0/10</span></div>
+        <div class="time-taken">Total time: <span id="total-time">0</span> seconds</div>
+        
+        <div class="analytics">
+            <h3>Performance Analytics</h3>
+            <div class="stat">
+                <span class="stat-label">Accuracy:</span>
+                <span id="accuracy">0%</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Average time per question:</span>
+                <span id="avg-time">0 seconds</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Fastest answer:</span>
+                <span id="fastest-time">0 seconds</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Slowest answer:</span>
+                <span id="slowest-time">0 seconds</span>
+            </div>
+        </div>
+        
+        <button id="restart-btn">Try Another Quiz</button>
+    </div>
+
+    <footer>
+        <p>Chemistry Speed Quiz | Pro Version</p>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const topicSelect = document.getElementById('topic-select');
+        const startBtn = document.getElementById('start-btn');
+        const setupSection = document.getElementById('setup');
+        const quizSection = document.getElementById('quiz');
+        const resultsSection = document.getElementById('results');
+        const questionCount = document.getElementById('question-count');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const timerBar = document.getElementById('timer-bar');
+        const finalScore = document.getElementById('final-score');
+        const totalTime = document.getElementById('total-time');
+        const accuracy = document.getElementById('accuracy');
+        const avgTime = document.getElementById('avg-time');
+        const fastestTime = document.getElementById('fastest-time');
+        const slowestTime = document.getElementById('slowest-time');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Quiz variables
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer;
+        let timeRemaining = 20;
+        let quizStartTime;
+        let questionTimes = [];
+        let questionStartTime;
+        let selectedTopic = '';
+
+        // Question banks for each topic
+        // These arrays will be filled manually later as mentioned in requirements
+        const questionBanks = {
+            'periodic-table': [],
+            'organic-chemistry': [],
+            'inorganic-chemistry': [],
+            'biochemistry': [],
+            'physical-chemistry': [],
+            'analytical-chemistry': [],
+            'thermodynamics': [],
+            'electrochemistry': [],
+            'nuclear-chemistry': [],
+            'quantum-chemistry': []
+        };
+
+        // Enable start button when a topic is selected
+        topicSelect.addEventListener('change', function() {
+            startBtn.disabled = !this.value;
+            selectedTopic = this.value;
+        });
+
+        // Start quiz when button is clicked
+        startBtn.addEventListener('click', startQuiz);
+        
+        // Restart button event listener
+        restartBtn.addEventListener('click', function() {
+            resultsSection.style.display = 'none';
+            setupSection.style.display = 'flex';
+            resetQuiz();
+        });
+
+        // Start the quiz
+        function startQuiz() {
+            // Make sure a topic is selected
+            if (!selectedTopic) return;
+            
+            // Check if the selected topic has questions
+            if (questionBanks[selectedTopic].length === 0) {
+                alert('No questions available for this topic yet. Please choose another topic or add questions to this topic.');
+                return;
+            }
+            
+            // Hide setup section and show quiz section
+            setupSection.style.display = 'none';
+            quizSection.style.display = 'block';
+            
+            // Reset quiz variables
+            resetQuiz();
+            
+            // Get random questions for the selected topic
+            currentQuestions = getRandomQuestions(selectedTopic, 10);
+            
+            // Track quiz start time
+            quizStartTime = new Date().getTime();
+            
+            // Display first question
+            displayQuestion();
+        }
+
+        // Reset quiz variables
+        function resetQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            questionTimes = [];
+            clearInterval(timer);
+        }
+
+        // Get random questions from a topic
+        function getRandomQuestions(topic, count) {
+            const questions = [...questionBanks[topic]];
+            
+            // If not enough questions are available, return all available questions
+            if (questions.length <= count) return questions;
+            
+            // Shuffle array using Fisher-Yates algorithm
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
+            }
+            
+            // Return the first 'count' questions
+            return questions.slice(0, count);
+        }
+
+        // Display current question
+        function displayQuestion() {
+            // Check if quiz is finished
+            if (currentQuestionIndex >= currentQuestions.length) {
+                endQuiz();
+                return;
+            }
+            
+            // Get current question
+            const current = currentQuestions[currentQuestionIndex];
+            
+            // Update question count
+            questionCount.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
+            
+            // Display question text
+            questionText.textContent = current.question;
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Create and add options
+            current.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.dataset.index = index;
+                optionElement.addEventListener('click', selectOption);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Reset and start timer
+            resetTimer();
+            questionStartTime = new Date().getTime();
+        }
+
+        // Handle option selection
+        function selectOption(e) {
+            // Clear timer
+            clearInterval(timer);
+            
+            // Calculate time taken for this question
+            const endTime = new Date().getTime();
+            const timeTaken = (endTime - questionStartTime) / 1000;
+            questionTimes.push(timeTaken);
+            
+            // Get selected option
+            const selectedIndex = parseInt(e.target.dataset.index);
+            const currentQuestion = currentQuestions[currentQuestionIndex];
+            
+            // Check if answer is correct
+            const isCorrect = selectedIndex === currentQuestion.correctIndex;
+            
+            // Update score
+            if (isCorrect) {
+                score++;
+                e.target.classList.add('correct');
+            } else {
+                e.target.classList.add('incorrect');
+                
+                // Highlight correct answer
+                const options = optionsContainer.children;
+                options[currentQuestion.correctIndex].classList.add('correct');
+            }
+            
+            // Disable all options
+            Array.from(optionsContainer.children).forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Go to next question after a short delay
+            setTimeout(() => {
+                currentQuestionIndex++;
+                displayQuestion();
+            }, 1500);
+        }
+
+        // Reset and start timer
+        function resetTimer() {
+            // Clear previous timer
+            clearInterval(timer);
+            
+            // Reset time remaining
+            timeRemaining = 20;
+            
+            // Reset timer bar
+            timerBar.style.width = '100%';
+            timerBar.className = 'timer-bar';
+            
+            // Start timer
+            timer = setInterval(() => {
+                timeRemaining -= 0.1;
+                
+                // Update timer bar
+                const percentage = (timeRemaining / 20) * 100;
+                timerBar.style.width = `${percentage}%`;
+                
+                // Add warning class when time is running low
+                if (timeRemaining <= 10 && timeRemaining > 5) {
+                    timerBar.className = 'timer-bar timer-warning';
+                } else if (timeRemaining <= 5) {
+                    timerBar.className = 'timer-bar timer-danger';
+                }
+                
+                // Move to next question when time is up
+                if (timeRemaining <= 0) {
+                    clearInterval(timer);
+                    
+                    // Record time taken as full 20 seconds
+                    questionTimes.push(20);
+                    
+                    // Highlight correct answer
+                    const currentQuestion = currentQuestions[currentQuestionIndex];
+                    const options = optionsContainer.children;
+                    options[currentQuestion.correctIndex].classList.add('correct');
+                    
+                    // Disable all options
+                    Array.from(optionsContainer.children).forEach(option => {
+                        option.style.pointerEvents = 'none';
+                    });
+                    
+                    // Go to next question after a short delay
+                    setTimeout(() => {
+                        currentQuestionIndex++;
+                        displayQuestion();
+                    }, 1500);
+                }
+            }, 100);
+        }
+
+        // End quiz and show results
+        function endQuiz() {
+            // Hide quiz section and show results section
+            quizSection.style.display = 'none';
+            resultsSection.style.display = 'block';
+            
+            // Calculate total time
+            const endTime = new Date().getTime();
+            const totalTimeTaken = Math.round((endTime - quizStartTime) / 1000);
+            
+            // Calculate statistics
+            const accuracyValue = (score / currentQuestions.length) * 100;
+            const averageTime = questionTimes.reduce((sum, time) => sum + time, 0) / questionTimes.length;
+            const fastestTimeValue = Math.min(...questionTimes);
+            const slowestTimeValue = Math.max(...questionTimes);
+            
+            // Display results
+            finalScore.textContent = `${score}/${currentQuestions.length}`;
+            totalTime.textContent = totalTimeTaken;
+            accuracy.textContent = `${accuracyValue.toFixed(1)}%`;
+            avgTime.textContent = `${averageTime.toFixed(1)} seconds`;
+            fastestTime.textContent = `${fastestTimeValue.toFixed(1)} seconds`;
+            slowestTime.textContent = `${slowestTimeValue.toFixed(1)} seconds`;
+        }
+
+        // Handle window resize for responsive design
+        window.addEventListener('resize', function() {
+            // Adjust layout based on screen size if needed
+            if (window.innerWidth <= 600) {
+                // Mobile layout adjustments if necessary
+            } else {
+                // Desktop layout adjustments if necessary
+            }
+        });
+    </script>
+</body>
+</html>
