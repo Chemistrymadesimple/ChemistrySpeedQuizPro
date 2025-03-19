@@ -3,79 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chemistry Speed Quiz</title>
+    <title>Chemistry Quiz Speed Test</title>
     <style>
         :root {
             --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --background-color: #f5f7fa;
-            --text-color: #2c3e50;
-            --danger-color: #e74c3c;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
             --warning-color: #f39c12;
+            --danger-color: #e74c3c;
         }
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--background-color);
-            color: var(--text-color);
+            background-color: #f5f5f5;
+            color: var(--dark-color);
             line-height: 1.6;
-            padding: 20px;
-            max-width: 900px;
-            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
         }
 
         h1 {
             color: var(--primary-color);
-            margin-bottom: 10px;
+            margin-bottom: 0.5rem;
         }
 
-        .container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            margin-bottom: 30px;
+        .subtitle {
+            color: var(--secondary-color);
+            font-weight: 300;
         }
 
-        .setup-section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .topic-selection {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: var(--light-color);
+            border-radius: 5px;
+        }
+
+        .topic-selection h2 {
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            color: var(--secondary-color);
         }
 
         select, button {
-            padding: 12px;
+            padding: 0.75rem 1rem;
+            border: none;
             border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 16px;
+            font-size: 1rem;
         }
 
         select {
+            width: 100%;
+            margin-bottom: 1rem;
             background-color: white;
+            border: 1px solid #ddd;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
         }
 
         button {
             background-color: var(--primary-color);
             color: white;
-            border: none;
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.3s;
+            width: 100%;
         }
 
         button:hover {
@@ -91,76 +109,113 @@
             display: none;
         }
 
+        .quiz-section.active {
+            display: block;
+        }
+
         .timer-container {
-            margin-bottom: 15px;
-            background-color: #ecf0f1;
-            border-radius: 5px;
+            margin-bottom: 1rem;
+            position: relative;
             height: 10px;
+            background-color: #eee;
+            border-radius: 5px;
             overflow: hidden;
         }
 
         .timer-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
             height: 100%;
             width: 100%;
             background-color: var(--primary-color);
             transition: width 0.1s linear;
         }
 
-        .timer-warning {
-            background-color: var(--warning-color);
-        }
-
-        .timer-danger {
-            background-color: var(--danger-color);
-        }
-
-        .question-count {
-            font-size: 18px;
-            margin-bottom: 15px;
+        .timer-text {
+            text-align: right;
+            margin-bottom: 0.5rem;
             font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .question-container {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .question {
-            font-size: 20px;
-            margin-bottom: 20px;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1.4;
         }
 
-        .options {
+        .answers {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
         }
 
-        @media (max-width: 600px) {
-            .options {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .option {
-            padding: 15px;
-            background-color: #ecf0f1;
-            border-radius: 5px;
-            border: 2px solid #ecf0f1;
+        .answer-btn {
+            text-align: left;
+            padding: 1.2rem;
+            background-color: #e9ecef;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: #2c3e50;
         }
 
-        .option:hover {
-            background-color: #d6e0e4;
-            border-color: #bdc3c7;
+        .answer-btn:hover {
+            background-color: #dee2e6;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .correct {
-            background-color: var(--secondary-color);
+        .answer-btn.selected {
+            background-color: var(--primary-color);
             color: white;
-            border-color: var(--secondary-color);
+            border-color: var(--primary-color);
+            transform: translateY(0);
         }
 
-        .incorrect {
+        .answer-btn.correct {
+            background-color: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .answer-btn.incorrect {
             background-color: var(--danger-color);
             color: white;
             border-color: var(--danger-color);
+        }
+
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .progress-count {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .progress-score {
+            font-weight: bold;
+            color: var(--success-color);
         }
 
         .results-section {
@@ -168,389 +223,827 @@
             text-align: center;
         }
 
-        .score {
-            font-size: 24px;
-            margin: 20px 0;
+        .results-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
         }
 
-        .score span {
+        .results-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .score-display {
+            font-size: 2.5rem;
             font-weight: bold;
+            margin: 1rem 0;
             color: var(--primary-color);
         }
 
-        .time-taken {
-            font-size: 18px;
-            margin-bottom: 20px;
+        .time-display {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: var(--secondary-color);
         }
 
-        .analytics {
-            margin: 30px 0;
-        }
-
-        .stat {
-            padding: 15px;
-            background-color: #ecf0f1;
+        .results-message {
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            padding: 1rem;
             border-radius: 5px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
+            background-color: var(--light-color);
         }
 
-        .stat-label {
-            font-weight: bold;
+        .restart-btn {
+            display: inline-block;
+            margin-top: 1rem;
+            background-color: var(--primary-color);
         }
 
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #7f8c8d;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (min-width: 768px) {
+            .answers {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Chemistry Speed Quiz</h1>
-        <p>Test your chemistry knowledge against the clock!</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Chemistry Quiz Speed Test</h1>
+            <p class="subtitle">Test your knowledge against the clock!</p>
+        </header>
 
-    <div class="container setup-section" id="setup">
-        <h2>Choose a Topic</h2>
-        <select id="topic-select">
-            <option value="" disabled selected>Select a chemistry topic</option>
-            <option value="periodic-table">Periodic Table</option>
-            <option value="organic-chemistry">Organic Chemistry</option>
-            <option value="inorganic-chemistry">Inorganic Chemistry</option>
-            <option value="biochemistry">Biochemistry</option>
-            <option value="physical-chemistry">Physical Chemistry</option>
-            <option value="analytical-chemistry">Analytical Chemistry</option>
-            <option value="thermodynamics">Thermodynamics</option>
-            <option value="electrochemistry">Electrochemistry</option>
-            <option value="nuclear-chemistry">Nuclear Chemistry</option>
-            <option value="quantum-chemistry">Quantum Chemistry</option>
-        </select>
-        <button id="start-btn" disabled>Start Quiz</button>
-    </div>
-
-    <div class="container quiz-section" id="quiz">
-        <div class="timer-container">
-            <div class="timer-bar" id="timer-bar"></div>
+        <!-- Topic Selection Screen -->
+        <div class="topic-selection" id="topicSelection">
+            <h2>Select an Chemistry Discipline</h2>
+            <select id="topicSelect">
+                <option value="" disabled selected>Choose a topic...</option>
+                <option value="organic">Organic Chemistry</option>
+                <option value="inorganic">Inorganic Chemistry</option>
+                <option value="physical">Physical Chemistry</option>
+                <option value="biochemistry">Biochemistry</option>
+                <option value="analytical">Analytical Chemistry</option>
+                <option value="nuclear">Nuclear Chemistry</option>
+                <option value="environmental">Environmental Chemistry</option>
+                <option value="polymer">Polymer Chemistry</option>
+                <option value="medicinal">Medicinal Chemistry</option>
+            </select>
+            <button id="startBtn" disabled>Start Quiz</button>
         </div>
-        <div class="question-count" id="question-count">Question 1 of 10</div>
-        <div class="question" id="question-text">Question text will appear here</div>
-        <div class="options" id="options-container">
-            <!-- Options will be dynamically inserted here -->
-        </div>
-    </div>
 
-    <div class="container results-section" id="results">
-        <h2>Quiz Complete!</h2>
-        <div class="score">Your score: <span id="final-score">0/10</span></div>
-        <div class="time-taken">Total time: <span id="total-time">0</span> seconds</div>
-        
-        <div class="analytics">
-            <h3>Performance Analytics</h3>
-            <div class="stat">
-                <span class="stat-label">Accuracy:</span>
-                <span id="accuracy">0%</span>
+        <!-- Quiz Section -->
+        <div class="quiz-section" id="quizSection">
+            <div class="progress">
+                <div class="progress-count">Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span></div>
+                <div class="progress-score">Score: <span id="currentScore">0</span></div>
             </div>
-            <div class="stat">
-                <span class="stat-label">Average time per question:</span>
-                <span id="avg-time">0 seconds</span>
+            
+            <div class="timer-text">Time remaining: <span id="timerText">20</span>s</div>
+            <div class="timer-container">
+                <div class="timer-bar" id="timerBar"></div>
             </div>
-            <div class="stat">
-                <span class="stat-label">Fastest answer:</span>
-                <span id="fastest-time">0 seconds</span>
-            </div>
-            <div class="stat">
-                <span class="stat-label">Slowest answer:</span>
-                <span id="slowest-time">0 seconds</span>
+            
+            <div class="question-container">
+                <div class="question" id="questionText">Question text goes here.</div>
+                <div class="answers" id="answerButtons">
+                    <!-- Answer buttons will be generated here -->
+                </div>
             </div>
         </div>
-        
-        <button id="restart-btn">Try Another Quiz</button>
-    </div>
 
-    <footer>
-        <p>Chemistry Speed Quiz | Pro Version</p>
-    </footer>
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <h2 class="results-header">Quiz Results</h2>
+            <div class="score-display"><span id="finalScore">0</span> / <span id="maxScore">10</span></div>
+            <div class="time-display">Completed in <span id="totalTime">0</span> seconds</div>
+            
+            <div class="results-message" id="resultsMessage">
+                <!-- Results message will be generated here -->
+            </div>
+            
+            <button id="restartBtn" class="restart-btn">Try Another Topic</button>
+        </div>
+    </div>
 
     <script>
         // DOM Elements
-        const topicSelect = document.getElementById('topic-select');
-        const startBtn = document.getElementById('start-btn');
-        const setupSection = document.getElementById('setup');
-        const quizSection = document.getElementById('quiz');
-        const resultsSection = document.getElementById('results');
-        const questionCount = document.getElementById('question-count');
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const timerBar = document.getElementById('timer-bar');
-        const finalScore = document.getElementById('final-score');
-        const totalTime = document.getElementById('total-time');
-        const accuracy = document.getElementById('accuracy');
-        const avgTime = document.getElementById('avg-time');
-        const fastestTime = document.getElementById('fastest-time');
-        const slowestTime = document.getElementById('slowest-time');
-        const restartBtn = document.getElementById('restart-btn');
+        const topicSelection = document.getElementById('topicSelection');
+        const quizSection = document.getElementById('quizSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const topicSelect = document.getElementById('topicSelect');
+        const startBtn = document.getElementById('startBtn');
+        const questionText = document.getElementById('questionText');
+        const answerButtons = document.getElementById('answerButtons');
+        const currentQuestionElement = document.getElementById('currentQuestion');
+        const totalQuestionsElement = document.getElementById('totalQuestions');
+        const currentScoreElement = document.getElementById('currentScore');
+        const timerBar = document.getElementById('timerBar');
+        const timerText = document.getElementById('timerText');
+        const finalScoreElement = document.getElementById('finalScore');
+        const maxScoreElement = document.getElementById('maxScore');
+        const totalTimeElement = document.getElementById('totalTime');
+        const resultsMessageElement = document.getElementById('resultsMessage');
+        const restartBtn = document.getElementById('restartBtn');
 
-        // Quiz variables
-        let currentQuestions = [];
-        let currentQuestionIndex = 0;
+        // Quiz Variables
+        let currentQuestion = 0;
         let score = 0;
-        let timer;
-        let timeRemaining = 20;
+        let timeLeft = 20;
+        let timerInterval;
+        let quizQuestions = [];
         let quizStartTime;
-        let questionTimes = [];
-        let questionStartTime;
+        let quizEndTime;
         let selectedTopic = '';
 
-        // Question banks for each topic
-        // These arrays will be filled manually later as mentioned in requirements
-        const questionBanks = {
-            'periodic-table': [],
-            'organic-chemistry': [],
-            'inorganic-chemistry': [],
-            'biochemistry': [],
-            'physical-chemistry': [],
-            'analytical-chemistry': [],
-            'thermodynamics': [],
-            'electrochemistry': [],
-            'nuclear-chemistry': [],
-            'quantum-chemistry': []
-        };
 
-        // Enable start button when a topic is selected
-        topicSelect.addEventListener('change', function() {
-            startBtn.disabled = !this.value;
-            selectedTopic = this.value;
+
+
+const questionBanks = {
+    organic: [
+        {
+            question: "What is the hybridization of carbon in ethene (C2H4)?",
+            options: [
+                "sp³",
+                "sp²",
+                "sp",
+                "sp³d"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which functional group is characterized by the C=O bond?",
+            options: [
+                "Alcohol",
+                "Amine",
+                "Carbonyl",
+                "Ether"
+            ],
+            answer: 2
+        },
+        {
+            question: "What type of reaction occurs when an alkene reacts with hydrogen gas in the presence of a catalyst?",
+            options: [
+                "Substitution",
+                "Addition",
+                "Elimination",
+                "Redox"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which of these is an aromatic compound?",
+            options: [
+                "Cyclohexane",
+                "Benzene",
+                "Cyclobutane",
+                "Hexane"
+            ],
+            answer: 1
+        },
+        {
+            question: "What reagent is commonly used for the conversion of carboxylic acid to an ester?",
+            options: [
+                "LiAlH₄",
+                "NaBH₄",
+                "H₂SO₄ and an alcohol",
+                "NaOH"
+            ],
+            answer: 2
+        }
+    ],
+    
+    inorganic: [
+        {
+            question: "Which of these is a coordination compound?",
+            options: [
+                "NaCl",
+                "CH₄",
+                "K₂[PtCl₆]",
+                "H₂O"
+            ],
+            answer: 2
+        },
+        {
+            question: "What is the oxidation state of chromium in K₂Cr₂O₇?",
+            options: [
+                "+3",
+                "+4",
+                "+6",
+                "+7"
+            ],
+            answer: 2
+        },
+        {
+            question: "Which theory best explains the bonding in metal carbonyls?",
+            options: [
+                "Valence Bond Theory",
+                "Crystal Field Theory",
+                "VSEPR Theory",
+                "Molecular Orbital Theory"
+            ],
+            answer: 3
+        },
+        {
+            question: "Which element has the highest electronegativity?",
+            options: [
+                "Oxygen",
+                "Fluorine",
+                "Chlorine",
+                "Nitrogen"
+            ],
+            answer: 1
+        },
+        {
+            question: "What type of isomerism is exhibited by [Co(NH₃)₄Cl₂]⁺?",
+            options: [
+                "Geometrical isomerism",
+                "Optical isomerism",
+                "Linkage isomerism",
+                "Ionization isomerism"
+            ],
+            answer: 0
+        }
+    ],
+    
+    physical: [
+        {
+            question: "What is the second law of thermodynamics related to?",
+            options: [
+                "Conservation of energy",
+                "Entropy",
+                "Temperature",
+                "Pressure"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which equation relates the Gibbs free energy to enthalpy and entropy?",
+            options: [
+                "G = H + TS",
+                "G = H - TS",
+                "G = H/TS",
+                "G = TS - H"
+            ],
+            answer: 1
+        },
+        {
+            question: "What is the order of a reaction in which the rate is proportional to the square of the concentration of a reactant?",
+            options: [
+                "Zero order",
+                "First order",
+                "Second order",
+                "Third order"
+            ],
+            answer: 2
+        },
+        {
+            question: "What is the pH of a solution with [H₃O⁺] = 1 × 10⁻⁵ M?",
+            options: [
+                "5",
+                "9",
+                "10",
+                "−5"
+            ],
+            answer: 0
+        },
+        {
+            question: "Which law states that the amount of gas dissolved in a liquid is directly proportional to its partial pressure?",
+            options: [
+                "Boyle's Law",
+                "Charles's Law",
+                "Henry's Law",
+                "Avogadro's Law"
+            ],
+            answer: 2
+        }
+    ],
+    
+    biochemistry: [
+        {
+            question: "Which of these is not an amino acid?",
+            options: [
+                "Lysine",
+                "Glycine",
+                "Fructose",
+                "Tryptophan"
+            ],
+            answer: 2
+        },
+        {
+            question: "What is the primary role of ATP in cellular metabolism?",
+            options: [
+                "Information storage",
+                "Energy carrier",
+                "Structural support",
+                "Enzyme regulation"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which process produces the most ATP molecules?",
+            options: [
+                "Glycolysis",
+                "Krebs cycle",
+                "Electron transport chain",
+                "Fermentation"
+            ],
+            answer: 2
+        },
+        {
+            question: "What is the structure of DNA described as?",
+            options: [
+                "Single helix",
+                "Double helix",
+                "Triple helix",
+                "Beta sheet"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which enzyme is responsible for unwinding DNA during replication?",
+            options: [
+                "DNA polymerase",
+                "Helicase",
+                "Ligase",
+                "Topoisomerase"
+            ],
+            answer: 1
+        }
+    ],
+    
+    analytical: [
+        {
+            question: "What technique separates components based on their partitioning between mobile and stationary phases?",
+            options: [
+                "Spectroscopy",
+                "Electrophoresis",
+                "Chromatography",
+                "Titration"
+            ],
+            answer: 2
+        },
+        {
+            question: "Which spectroscopic technique is based on the absorption of infrared radiation?",
+            options: [
+                "UV-Vis spectroscopy",
+                "IR spectroscopy",
+                "NMR spectroscopy",
+                "Mass spectrometry"
+            ],
+            answer: 1
+        },
+        {
+            question: "What is the principle behind atomic absorption spectroscopy?",
+            options: [
+                "Emission of light by excited atoms",
+                "Absorption of light by ground state atoms",
+                "Refraction of light by atoms",
+                "Scattering of light by atoms"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which technique is most suitable for determining the molecular weight of proteins?",
+            options: [
+                "UV-Vis spectroscopy",
+                "IR spectroscopy",
+                "Mass spectrometry",
+                "Potentiometry"
+            ],
+            answer: 2
+        },
+        {
+            question: "What is the end point in a titration?",
+            options: [
+                "The point where pH equals 7",
+                "The point where the indicator changes color",
+                "The point where the concentrations of reactants equal products",
+                "The point where the reaction rate is zero"
+            ],
+            answer: 1
+        }
+    ],
+    
+    nuclear: [
+        {
+            question: "What particle is emitted during beta decay?",
+            options: [
+                "Proton",
+                "Neutron",
+                "Electron",
+                "Alpha particle"
+            ],
+            answer: 2
+        },
+        {
+            question: "What is the half-life of a radioactive isotope?",
+            options: [
+                "Time taken for half the atoms to decay",
+                "Time taken for all atoms to decay",
+                "Time taken for atoms to become stable",
+                "Time taken for radiation to become harmless"
+            ],
+            answer: 0
+        },
+        {
+            question: "Which process involves the combination of light nuclei to form heavier nuclei?",
+            options: [
+                "Nuclear fission",
+                "Nuclear fusion",
+                "Beta decay",
+                "Alpha decay"
+            ],
+            answer: 1
+        },
+        {
+            question: "What is the unit of radioactivity?",
+            options: [
+                "Joule",
+                "Gray",
+                "Becquerel",
+                "Sievert"
+            ],
+            answer: 2
+        },
+        {
+            question: "Which isotope is commonly used in radiometric dating of ancient artifacts?",
+            options: [
+                "Carbon-14",
+                "Uranium-235",
+                "Plutonium-239",
+                "Hydrogen-3"
+            ],
+            answer: 0
+        }
+    ],
+    
+    environmental: [
+        {
+            question: "Which gas is primarily responsible for acid rain?",
+            options: [
+                "Carbon dioxide",
+                "Methane",
+                "Sulfur dioxide",
+                "Nitrogen"
+            ],
+            answer: 2
+        },
+        {
+            question: "What is the main cause of ozone depletion in the stratosphere?",
+            options: [
+                "Carbon emissions",
+                "CFCs (Chlorofluorocarbons)",
+                "Methane emissions",
+                "Water vapor"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which water quality parameter measures the amount of dissolved oxygen consumed by microorganisms?",
+            options: [
+                "pH",
+                "BOD (Biochemical Oxygen Demand)",
+                "Conductivity",
+                "Turbidity"
+            ],
+            answer: 1
+        },
+        {
+            question: "What is bioaccumulation?",
+            options: [
+                "Increase in biodiversity",
+                "Accumulation of pollutants in living organisms over time",
+                "Accumulation of microorganisms in soil",
+                "Natural buildup of sediments in water bodies"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which of these is a greenhouse gas?",
+            options: [
+                "Oxygen",
+                "Nitrogen",
+                "Methane",
+                "Argon"
+            ],
+            answer: 2
+        }
+    ],
+    
+    polymer: [
+        {
+            question: "What type of polymerization involves the reaction of monomers with different functional groups?",
+            options: [
+                "Addition polymerization",
+                "Condensation polymerization",
+                "Free radical polymerization",
+                "Chain polymerization"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which polymer is used to make PET bottles?",
+            options: [
+                "Polyethylene",
+                "Polypropylene",
+                "Polyethylene terephthalate",
+                "Polyvinyl chloride"
+            ],
+            answer: 2
+        },
+        {
+            question: "What is the repeating unit in nylon-6,6?",
+            options: [
+                "Ethylene",
+                "Styrene",
+                "Hexamethylenediamine and adipic acid",
+                "Vinyl chloride"
+            ],
+            answer: 2
+        },
+        {
+            question: "Which of these is a natural polymer?",
+            options: [
+                "Polyethylene",
+                "Polyvinyl chloride",
+                "Cellulose",
+                "Polystyrene"
+            ],
+            answer: 2
+        },
+        {
+            question: "What property of polymers increases with cross-linking?",
+            options: [
+                "Flexibility",
+                "Solubility",
+                "Rigidity",
+                "Conductivity"
+            ],
+            answer: 2
+        }
+    ],
+    
+    medicinal: [
+        {
+            question: "What is the process of drug metabolism primarily carried out by?",
+            options: [
+                "Kidneys",
+                "Liver",
+                "Lungs",
+                "Heart"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which of these is an example of a prodrug?",
+            options: [
+                "Aspirin",
+                "Paracetamol",
+                "Enalapril",
+                "Ibuprofen"
+            ],
+            answer: 2
+        },
+        {
+            question: "What is the lock and key model related to in medicinal chemistry?",
+            options: [
+                "Drug delivery systems",
+                "Drug-receptor interactions",
+                "Drug metabolism",
+                "Drug synthesis"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which term describes the study of how drugs are absorbed, distributed, metabolized, and excreted by the body?",
+            options: [
+                "Pharmacodynamics",
+                "Pharmacokinetics",
+                "Pharmacognosy",
+                "Pharmacology"
+            ],
+            answer: 1
+        },
+        {
+            question: "What does QSAR stand for in medicinal chemistry?",
+            options: [
+                "Quantitative Structure-Activity Relationship",
+                "Quality System Analytical Review",
+                "Quantum Synthetic Aromatic Research",
+                "Quick Screening Assay Response"
+            ],
+            answer: 0
+        }
+    ]
+};
+
+
+ // Enable the start button when a topic is selected
+        topicSelect.addEventListener('change', () => {
+            selectedTopic = topicSelect.value;
+            startBtn.disabled = false;
         });
 
-        // Start quiz when button is clicked
+        // Start the quiz when the start button is clicked
         startBtn.addEventListener('click', startQuiz);
-        
-        // Restart button event listener
-        restartBtn.addEventListener('click', function() {
-            resultsSection.style.display = 'none';
-            setupSection.style.display = 'flex';
-            resetQuiz();
+
+        // Reset quiz when the restart button is clicked
+        restartBtn.addEventListener('click', () => {
+            resultsSection.classList.remove('active');
+            topicSelection.style.display = 'block';
+            topicSelect.value = '';
+            startBtn.disabled = true;
         });
 
         // Start the quiz
         function startQuiz() {
-            // Make sure a topic is selected
-            if (!selectedTopic) return;
-            
-            // Check if the selected topic has questions
+            // Check if questions are available for the selected topic
             if (questionBanks[selectedTopic].length === 0) {
-                alert('No questions available for this topic yet. Please choose another topic or add questions to this topic.');
+                alert("No questions available for this topic yet. Please choose another topic.");
                 return;
             }
             
-            // Hide setup section and show quiz section
-            setupSection.style.display = 'none';
-            quizSection.style.display = 'block';
+            // Choose 10 random questions from the selected topic
+            quizQuestions = getRandomQuestions(questionBanks[selectedTopic], 10);
             
             // Reset quiz variables
-            resetQuiz();
+            currentQuestion = 0;
+            score = 0;
             
-            // Get random questions for the selected topic
-            currentQuestions = getRandomQuestions(selectedTopic, 10);
+            // Update the UI
+            currentScoreElement.textContent = score;
+            totalQuestionsElement.textContent = quizQuestions.length;
             
-            // Track quiz start time
+            // Hide topic selection and show quiz section
+            topicSelection.style.display = 'none';
+            quizSection.classList.add('active');
+            
+            // Record start time
             quizStartTime = new Date().getTime();
             
-            // Display first question
-            displayQuestion();
+            // Show the first question
+            showQuestion();
         }
 
-        // Reset quiz variables
-        function resetQuiz() {
-            currentQuestionIndex = 0;
-            score = 0;
-            questionTimes = [];
-            clearInterval(timer);
+        // Get random questions from the question bank
+        function getRandomQuestions(questions, count) {
+            const shuffled = [...questions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
         }
 
-        // Get random questions from a topic
-        function getRandomQuestions(topic, count) {
-            const questions = [...questionBanks[topic]];
-            
-            // If not enough questions are available, return all available questions
-            if (questions.length <= count) return questions;
-            
-            // Shuffle array using Fisher-Yates algorithm
-            for (let i = questions.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [questions[i], questions[j]] = [questions[j], questions[i]];
-            }
-            
-            // Return the first 'count' questions
-            return questions.slice(0, count);
-        }
-
-        // Display current question
-        function displayQuestion() {
-            // Check if quiz is finished
-            if (currentQuestionIndex >= currentQuestions.length) {
-                endQuiz();
-                return;
-            }
-            
-            // Get current question
-            const current = currentQuestions[currentQuestionIndex];
-            
-            // Update question count
-            questionCount.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
-            
-            // Display question text
-            questionText.textContent = current.question;
-            
-            // Clear previous options
-            optionsContainer.innerHTML = '';
-            
-            // Create and add options
-            current.options.forEach((option, index) => {
-                const optionElement = document.createElement('div');
-                optionElement.className = 'option';
-                optionElement.textContent = option;
-                optionElement.dataset.index = index;
-                optionElement.addEventListener('click', selectOption);
-                optionsContainer.appendChild(optionElement);
-            });
-            
-            // Reset and start timer
-            resetTimer();
-            questionStartTime = new Date().getTime();
-        }
-
-        // Handle option selection
-        function selectOption(e) {
-            // Clear timer
-            clearInterval(timer);
-            
-            // Calculate time taken for this question
-            const endTime = new Date().getTime();
-            const timeTaken = (endTime - questionStartTime) / 1000;
-            questionTimes.push(timeTaken);
-            
-            // Get selected option
-            const selectedIndex = parseInt(e.target.dataset.index);
-            const currentQuestion = currentQuestions[currentQuestionIndex];
-            
-            // Check if answer is correct
-            const isCorrect = selectedIndex === currentQuestion.correctIndex;
-            
-            // Update score
-            if (isCorrect) {
-                score++;
-                e.target.classList.add('correct');
-            } else {
-                e.target.classList.add('incorrect');
-                
-                // Highlight correct answer
-                const options = optionsContainer.children;
-                options[currentQuestion.correctIndex].classList.add('correct');
-            }
-            
-            // Disable all options
-            Array.from(optionsContainer.children).forEach(option => {
-                option.style.pointerEvents = 'none';
-            });
-            
-            // Go to next question after a short delay
-            setTimeout(() => {
-                currentQuestionIndex++;
-                displayQuestion();
-            }, 1500);
-        }
-
-        // Reset and start timer
-        function resetTimer() {
-            // Clear previous timer
-            clearInterval(timer);
-            
-            // Reset time remaining
-            timeRemaining = 20;
-            
-            // Reset timer bar
+        // Show the current question and answers
+        function showQuestion() {
+            // Reset timer
+            clearInterval(timerInterval);
+            timeLeft = 20;
             timerBar.style.width = '100%';
-            timerBar.className = 'timer-bar';
+            timerText.textContent = timeLeft;
             
             // Start timer
-            timer = setInterval(() => {
-                timeRemaining -= 0.1;
-                
-                // Update timer bar
-                const percentage = (timeRemaining / 20) * 100;
-                timerBar.style.width = `${percentage}%`;
-                
-                // Add warning class when time is running low
-                if (timeRemaining <= 10 && timeRemaining > 5) {
-                    timerBar.className = 'timer-bar timer-warning';
-                } else if (timeRemaining <= 5) {
-                    timerBar.className = 'timer-bar timer-danger';
-                }
-                
-                // Move to next question when time is up
-                if (timeRemaining <= 0) {
-                    clearInterval(timer);
-                    
-                    // Record time taken as full 20 seconds
-                    questionTimes.push(20);
-                    
-                    // Highlight correct answer
-                    const currentQuestion = currentQuestions[currentQuestionIndex];
-                    const options = optionsContainer.children;
-                    options[currentQuestion.correctIndex].classList.add('correct');
-                    
-                    // Disable all options
-                    Array.from(optionsContainer.children).forEach(option => {
-                        option.style.pointerEvents = 'none';
-                    });
-                    
-                    // Go to next question after a short delay
-                    setTimeout(() => {
-                        currentQuestionIndex++;
-                        displayQuestion();
-                    }, 1500);
-                }
-            }, 100);
+            startTimer();
+            
+            // Update question number
+            currentQuestionElement.textContent = currentQuestion + 1;
+            
+            // Get the current question
+            const question = quizQuestions[currentQuestion];
+            
+            // Update question text
+            questionText.textContent = question.question;
+            
+            // Clear previous answer buttons
+            answerButtons.innerHTML = '';
+            
+            // Create answer buttons
+            question.options.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.classList.add('answer-btn');
+                button.textContent = answer;
+                button.dataset.index = index;
+                button.addEventListener('click', selectAnswer);
+                answerButtons.appendChild(button);
+            });
         }
 
-        // End quiz and show results
-        function endQuiz() {
-            // Hide quiz section and show results section
-            quizSection.style.display = 'none';
-            resultsSection.style.display = 'block';
-            
-            // Calculate total time
-            const endTime = new Date().getTime();
-            const totalTimeTaken = Math.round((endTime - quizStartTime) / 1000);
-            
-            // Calculate statistics
-            const accuracyValue = (score / currentQuestions.length) * 100;
-            const averageTime = questionTimes.reduce((sum, time) => sum + time, 0) / questionTimes.length;
-            const fastestTimeValue = Math.min(...questionTimes);
-            const slowestTimeValue = Math.max(...questionTimes);
-            
-            // Display results
-            finalScore.textContent = `${score}/${currentQuestions.length}`;
-            totalTime.textContent = totalTimeTaken;
-            accuracy.textContent = `${accuracyValue.toFixed(1)}%`;
-            avgTime.textContent = `${averageTime.toFixed(1)} seconds`;
-            fastestTime.textContent = `${fastestTimeValue.toFixed(1)} seconds`;
-            slowestTime.textContent = `${slowestTimeValue.toFixed(1)} seconds`;
+        // Start the timer for the current question
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerText.textContent = timeLeft;
+                timerBar.style.width = `${(timeLeft / 20) * 100}%`;
+                
+                if (timeLeft <= 5) {
+                    timerBar.style.backgroundColor = 'var(--danger-color)';
+                } else if (timeLeft <= 10) {
+                    timerBar.style.backgroundColor = 'var(--warning-color)';
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeUp();
+                }
+            }, 1000);
         }
 
-        // Handle window resize for responsive design
-        window.addEventListener('resize', function() {
-            // Adjust layout based on screen size if needed
-            if (window.innerWidth <= 600) {
-                // Mobile layout adjustments if necessary
+        // Handle when time runs out for a question
+        function handleTimeUp() {
+            // Disable all answer buttons
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(button => {
+                button.disabled = true;
+            });
+            
+            // Highlight the correct answer
+            const correctAnswerIndex = quizQuestions[currentQuestion].answer;
+            buttons[correctAnswerIndex].classList.add('correct');
+            
+            // Wait a moment before moving to the next question
+            setTimeout(nextQuestion, 1500);
+        }
+
+        // Handle when an answer is selected
+        function selectAnswer(e) {
+            // Stop the timer
+            clearInterval(timerInterval);
+            
+            // Get the selected answer index
+            const selectedIndex = parseInt(e.target.dataset.index);
+            
+            // Get the correct answer index
+            const correctAnswerIndex = quizQuestions[currentQuestion].answer;
+            
+            // Disable all answer buttons
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(button => {
+                button.disabled = true;
+            });
+            
+            // Highlight the selected answer
+            e.target.classList.add('selected');
+            
+            // Check if the answer is correct
+            if (selectedIndex === correctAnswerIndex) {
+                e.target.classList.add('correct');
+                score++;
+                currentScoreElement.textContent = score;
             } else {
-                // Desktop layout adjustments if necessary
+                e.target.classList.add('incorrect');
+                buttons[correctAnswerIndex].classList.add('correct');
             }
-        });
+            
+            // Wait a moment before moving to the next question
+            setTimeout(nextQuestion, 1500);
+        }
+
+        // Move to the next question or end the quiz
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < quizQuestions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // End the quiz and show results
+        function endQuiz() {
+            // Record end time
+            quizEndTime = new Date().getTime();
+            
+            // Calculate total time in seconds
+            const totalTimeInSeconds = Math.floor((quizEndTime - quizStartTime) / 1000);
+            
+            // Update results
+            finalScoreElement.textContent = score;
+            maxScoreElement.textContent = quizQuestions.length;
+            totalTimeElement.textContent = totalTimeInSeconds;
+            
+            // Generate results message based on score
+            let resultsMessage = '';
+            const percentage = (score / quizQuestions.length) * 100;
+            
+            if (percentage >= 90) {
+                resultsMessage = 'Excellent! You have a profound understanding of this chemistry discipline.';
+            } else if (percentage >= 70) {
+                resultsMessage = 'Great job! You have a solid grasp of the key concepts.';
+            } else if (percentage >= 50) {
+                resultsMessage = 'Good effort! You know the basics but might want to review some areas.';
+            } else {
+                resultsMessage = 'Keep studying! This topic requires more practice to master.';
+            }
+            
+            resultsMessageElement.textContent = resultsMessage;
+            
+            // Hide quiz section and show results section
+            quizSection.classList.remove('active');
+            resultsSection.classList.add('active');
+        }
     </script>
 </body>
 </html>
